@@ -18,7 +18,7 @@ public class ValidateCaptchaActionFilter : IAsyncActionFilter
     {
         var requestContainsCaptchaResponseTokenHeader = context.HttpContext.Request.Headers
             .TryGetValue("X-Captcha-Response", out var captchaResponseToken);
-        
+
         if (!requestContainsCaptchaResponseTokenHeader || string.IsNullOrEmpty(captchaResponseToken.ToString()))
         {
             var problemDetails = new ProblemDetails
@@ -30,9 +30,9 @@ public class ValidateCaptchaActionFilter : IAsyncActionFilter
             context.Result = new BadRequestObjectResult(problemDetails);
             return;
         }
-        
+
         var validationResult = await _captchaValidator.ValidateAsync(captchaResponseToken.ToString());
-        
+
         if (validationResult.IsFailure)
         {
             var problemDetails = new ProblemDetails
@@ -44,7 +44,7 @@ public class ValidateCaptchaActionFilter : IAsyncActionFilter
             context.Result = new BadRequestObjectResult(problemDetails);
             return;
         }
-        
+
         await next();
     }
 }
