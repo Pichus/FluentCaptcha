@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCaptcha", "src\FluentCaptcha\FluentCaptcha.csproj", "{5D3D11F8-A40F-4C0A-A95C-D839E22A7585}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCaptcha.Core", "src\FluentCaptcha.Core\FluentCaptcha.Core.csproj", "{5D3D11F8-A40F-4C0A-A95C-D839E22A7585}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCaptcha.Examples.WebApi", "examples\FluentCaptcha.Examples.WebApi\FluentCaptcha.Examples.WebApi.csproj", "{823333FB-B395-460E-A123-9F886E367B1D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
