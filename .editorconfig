@@ -3,6 +3,10 @@ root = true
 # C# files
 [*.cs]
 
+#### Resharper ####
+resharper_csharp_place_attribute_on_same_line = false
+# resharper_csharp_place_simple_initializer_on_single_line = false
+
 #### Core EditorConfig Options ####
 
 # Indentation and spacing
@@ -112,9 +116,9 @@ csharp_style_prefer_readonly_struct_member = true
 # Code-block preferences
 csharp_prefer_braces = true
 csharp_prefer_simple_using_statement = true
-csharp_style_namespace_declarations = block_scoped
+csharp_style_namespace_declarations = file_scoped
 csharp_style_prefer_method_group_conversion = true
-csharp_style_prefer_primary_constructors = true
+csharp_style_prefer_primary_constructors = false
 csharp_style_prefer_top_level_statements = true
 
 # Expression-level preferences
