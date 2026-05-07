@@ -5,28 +5,14 @@ namespace FluentCaptcha.Core;
 
 public static class FluentCaptchaServiceCollectionExtensions
 {
-    public static FluentCaptchaServicesBuilder AddFluentCaptcha(this IServiceCollection services)
+    public static IServiceCollection AddFluentCaptcha(
+        this IServiceCollection services,
+        Action<IFluentCaptchaConfigurator>? configure = null)
     {
-        var builder = new FluentCaptchaServicesBuilder(services);
-        return builder;
-    }
+        var configurator = new FluentCaptchaConfigurator(services);
 
-    public static FluentCaptchaServicesBuilder AddCloudflareCaptchaProvider(
-        this FluentCaptchaServicesBuilder builder,
-        Action<CloudflareTurnstileCaptchaOptions> configureCloudflareCaptcha)
-    {
-        builder.Services.AddHttpClient<ICaptchaValidator, CloudflareCaptchaValidator>();
-        builder.Services.Configure<CloudflareTurnstileCaptchaOptions>(configureCloudflareCaptcha);
-        return builder;
-    }
-}
+        configure?.Invoke(configurator);
 
-public class FluentCaptchaServicesBuilder
-{
-    internal FluentCaptchaServicesBuilder(IServiceCollection services)
-    {
-        Services = services;
+        return services;
     }
-
-    public IServiceCollection Services { get; }
 }
