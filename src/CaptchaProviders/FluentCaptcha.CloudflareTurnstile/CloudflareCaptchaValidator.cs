@@ -1,0 +1,130 @@
+using FluentCaptcha.CloudflareTurnstile.Options;
+using FluentCaptcha.Core.Abstractions;
+using FluentCaptcha.Core.Exceptions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace FluentCaptcha.CloudflareTurnstile;
+
+public class CloudflareCaptchaValidator : ICaptchaValidator
+{
+    private readonly CloudflareTurnstileOptions _cloudflareTurnstileOptions;
+    private readonly HttpClient _httpClient;
+    private readonly ILogger<CloudflareCaptchaValidator> _logger;
+
+    public CloudflareCaptchaValidator(HttpClient httpClient, ILogger<CloudflareCaptchaValidator> logger,
+        IOptions<CloudflareTurnstileOptions> turnstileCaptchaOptions)
+    {
+        _httpClient = httpClient;
+        _logger = logger;
+        _cloudflareTurnstileOptions = turnstileCaptchaOptions.Value;
+    }
+
+    public async Task<CaptchaValidationResult> ValidateAsync(string captchaResponseToken, string? remoteIp = null)
+    {
+        var parameters = new Dictionary<string, string>
+        {
+            { "secret", _cloudflareTurnstileOptions.SecretKey }, { "response", captchaResponseToken }
+        };
+
+        if (!string.IsNullOrEmpty(remoteIp))
+        {
+            parameters.Add("remoteip", remoteIp);
+        }
+
+        var postContent = new FormUrlEncodedContent(parameters);
+
+        using var response = await SendTokenVerificationRequestAsync(postContent);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            const string errorMessage = "Cloudflare Turnstile API verification failed.";
+            _logger.LogError(
+                errorMessage + " Status code: {StatusCode}. Response: {Response}",
+                response.StatusCode,
+                await response.Content.ReadAsStringAsync());
+
+            return CaptchaValidationResult.Failure(errorMessage);
+        }
+
+        var deserializedResponse = await DeserializeResponseAsync(response);
+
+        if (!deserializedResponse.Success)
+        {
+            if (deserializedResponse.ErrorCodes is null || deserializedResponse.ErrorCodes.Count == 0)
+            {
+                return CaptchaValidationResult.Failure("CAPTCHA token validation failed. No error codes provided.");
+            }
+
+            return CaptchaValidationResult.Failure(deserializedResponse.ErrorCodes);
+        }
+
+        return CaptchaValidationResult.Success();
+    }
+
+
+    private async Task<HttpResponseMessage> SendTokenVerificationRequestAsync(FormUrlEncodedContent request)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsync(_cloudflareTurnstileOptions.SiteVerifyUrl, request);
+
+            return response;
+        }
+        catch (Exception invalidUriException) when (invalidUriException is InvalidOperationException
+                                                        or UriFormatException)
+        {
+            const string errorMessage = "Invalid Cloudflare Turnstile API endpoint URL format.";
+            _logger.LogCritical(invalidUriException, errorMessage);
+
+            throw new FluentCaptchaConfigurationException(errorMessage, invalidUriException);
+        }
+        catch (Exception requestException) when (requestException is HttpRequestException or OperationCanceledException)
+        {
+            const string errorMessage = "Cloudflare Turnstile API request failed.";
+            _logger.LogError(requestException, errorMessage);
+
+            throw new FluentCaptchaNetworkErrorException(errorMessage, requestException);
+        }
+    }
+
+    private async Task<CaptchaVerificationResponse> DeserializeResponseAsync(HttpResponseMessage response)
+    {
+        try
+        {
+            var deserializedResponse = await response.Content.ReadFromJsonAsync<CaptchaVerificationResponse>();
+
+            if (deserializedResponse is null)
+            {
+                const string errorMessage = "Failed to deserialize Cloudflare Turnstile API response. Result is null.";
+                _logger.LogError(errorMessage);
+
+                throw new FluentCaptchaErrorException(errorMessage);
+            }
+
+            return deserializedResponse!;
+        }
+        catch (Exception exception) when (exception is JsonException
+                                              or NotSupportedException
+                                              or ArgumentNullException
+                                              or OperationCanceledException)
+        {
+            const string errorMessage = "Failed to deserialize Cloudflare Turnstile API response.";
+            _logger.LogError(exception, errorMessage);
+
+            throw new FluentCaptchaErrorException(errorMessage, exception);
+        }
+    }
+
+    private class CaptchaVerificationResponse
+    {
+        [JsonPropertyName("success")]
+        public bool Success { get; init; }
+
+        [JsonPropertyName("error-codes")]
+        public List<string>? ErrorCodes { get; init; }
+    }
+}

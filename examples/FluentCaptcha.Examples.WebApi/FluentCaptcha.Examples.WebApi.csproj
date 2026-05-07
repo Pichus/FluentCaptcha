@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\FluentCaptcha.Core\FluentCaptcha.Core.csproj" />
+      <ProjectReference Include="..\..\src\CaptchaProviders\FluentCaptcha.CloudflareTurnstile\FluentCaptcha.CloudflareTurnstile.csproj" />
     </ItemGroup>
 
 </Project>
