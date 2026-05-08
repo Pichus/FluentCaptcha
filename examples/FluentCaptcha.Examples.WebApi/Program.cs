@@ -1,5 +1,6 @@
 using FluentCaptcha.CloudflareTurnstile;
 using FluentCaptcha.Core;
+using FluentCaptcha.Dummy;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddFluentCaptcha(captchaOptions =>
 {
-    captchaOptions.UseCloudflareTurnstile();
+    captchaOptions.UseCloudflareTurnstile(cloudflareOptions =>
+    {
+        cloudflareOptions.SecretKey = CloudflareTurnstileConstants.TestSecretKeys.AlwaysPassValidation;
+    });
+    captchaOptions.AddDummy();
 });
 builder.Services.AddControllers();
 
