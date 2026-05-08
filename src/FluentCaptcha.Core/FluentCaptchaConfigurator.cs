@@ -17,12 +17,14 @@ public class FluentCaptchaConfigurator : IFluentCaptchaConfigurator
     public void AddCaptchaProvider<TCaptchaProvider>(string captchaProviderName, bool asTypedHttpClient = false)
         where TCaptchaProvider : class, ICaptchaValidator
     {
+        var serviceKey = FluentCaptchaConstants.LibraryPrefix + captchaProviderName;
+
         if (asTypedHttpClient)
         {
-            _services.AddHttpClient<ICaptchaValidator, TCaptchaProvider>(captchaProviderName).AddAsKeyed();
+            _services.AddHttpClient<ICaptchaValidator, TCaptchaProvider>(serviceKey).AddAsKeyed();
         }
 
-        _services.AddKeyedScoped<ICaptchaValidator, TCaptchaProvider>(captchaProviderName);
+        _services.AddKeyedScoped<ICaptchaValidator, TCaptchaProvider>(serviceKey);
     }
 
     public void AddOptions<TOptions>(Action<TOptions> configureOptions)

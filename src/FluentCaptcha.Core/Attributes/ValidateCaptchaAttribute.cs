@@ -30,7 +30,8 @@ public class ValidateCaptchaAttribute : Attribute, IFilterFactory
             captchaProviderName = CaptchaProvider;
         }
 
-        var captchaProviderInstance = serviceProvider.GetKeyedService<ICaptchaValidator>(captchaProviderName);
+        var serviceKey = FluentCaptchaConstants.LibraryPrefix + captchaProviderName;
+        var captchaProviderInstance = serviceProvider.GetKeyedService<ICaptchaValidator>(serviceKey);
 
         if (captchaProviderInstance is null)
         {
