@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCaptcha.Examples.WebA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCaptcha.CloudflareTurnstile", "src\CaptchaProviders\FluentCaptcha.CloudflareTurnstile\FluentCaptcha.CloudflareTurnstile.csproj", "{CB90D1E7-4EC8-4D7B-8DDF-80E8C9966636}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCaptcha.Dummy", "src\CaptchaProviders\FluentCaptcha.Dummy\FluentCaptcha.Dummy.csproj", "{8208B2D7-69E8-41BA-BC7A-F5D8533038EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -16,13 +18,17 @@ Global
 		{5D3D11F8-A40F-4C0A-A95C-D839E22A7585}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D3D11F8-A40F-4C0A-A95C-D839E22A7585}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D3D11F8-A40F-4C0A-A95C-D839E22A7585}.Release|Any CPU.Build.0 = Release|Any CPU
-        {823333FB-B395-460E-A123-9F886E367B1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-        {823333FB-B395-460E-A123-9F886E367B1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-        {823333FB-B395-460E-A123-9F886E367B1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-        {823333FB-B395-460E-A123-9F886E367B1D}.Release|Any CPU.Build.0 = Release|Any CPU
+								{823333FB-B395-460E-A123-9F886E367B1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+								{823333FB-B395-460E-A123-9F886E367B1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+								{823333FB-B395-460E-A123-9F886E367B1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+								{823333FB-B395-460E-A123-9F886E367B1D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CB90D1E7-4EC8-4D7B-8DDF-80E8C9966636}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CB90D1E7-4EC8-4D7B-8DDF-80E8C9966636}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB90D1E7-4EC8-4D7B-8DDF-80E8C9966636}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CB90D1E7-4EC8-4D7B-8DDF-80E8C9966636}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8208B2D7-69E8-41BA-BC7A-F5D8533038EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8208B2D7-69E8-41BA-BC7A-F5D8533038EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8208B2D7-69E8-41BA-BC7A-F5D8533038EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8208B2D7-69E8-41BA-BC7A-F5D8533038EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
