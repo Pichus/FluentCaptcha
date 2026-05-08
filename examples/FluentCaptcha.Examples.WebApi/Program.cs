@@ -1,11 +1,15 @@
 using FluentCaptcha.CloudflareTurnstile;
 using FluentCaptcha.Core;
 using FluentCaptcha.Dummy;
+using FluentCaptcha.NSwag;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApiDocument(options =>
+{
+    options.IntegrateWithFluentCaptcha();
+});
 builder.Services.AddFluentCaptcha(captchaOptions =>
 {
     captchaOptions.UseCloudflareTurnstile(cloudflareOptions =>
@@ -23,7 +27,8 @@ app.MapControllers();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseOpenApi();
+    app.UseSwaggerUi();
 }
 
 app.UseHttpsRedirection();

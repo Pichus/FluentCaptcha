@@ -8,12 +8,14 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3"/>
+        <PackageReference Include="NSwag.AspNetCore" Version="14.7.1"/>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\CaptchaProviders\FluentCaptcha.Dummy\FluentCaptcha.Dummy.csproj"/>
         <ProjectReference Include="..\..\src\FluentCaptcha.Core\FluentCaptcha.Core.csproj"/>
         <ProjectReference Include="..\..\src\CaptchaProviders\FluentCaptcha.CloudflareTurnstile\FluentCaptcha.CloudflareTurnstile.csproj"/>
+        <ProjectReference Include="..\..\src\Integrations\FluentCaptcha.NSwag\FluentCaptcha.NSwag.csproj"/>
     </ItemGroup>
 
 </Project>
