@@ -12,6 +12,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCaptcha.NSwag", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCaptcha.Swashbuckle", "src\Integrations\FluentCaptcha.Swashbuckle\FluentCaptcha.Swashbuckle.csproj", "{164B0C93-3535-455B-A188-752CBD82029F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCaptcha.Examples.Swashbuckle", "examples\FluentCaptcha.Examples.Swashbuckle\FluentCaptcha.Examples.Swashbuckle.csproj", "{EE876268-9E20-4AE0-9845-C5A589FB1ADD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCaptcha.Examples.Shared", "examples\FluentCaptcha.Examples.Shared\FluentCaptcha.Examples.Shared.csproj", "{54DFF7B2-E0DF-47F3-B7D5-F5BB0EB0409E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +46,13 @@ Global
 		{164B0C93-3535-455B-A188-752CBD82029F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{164B0C93-3535-455B-A188-752CBD82029F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{164B0C93-3535-455B-A188-752CBD82029F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE876268-9E20-4AE0-9845-C5A589FB1ADD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE876268-9E20-4AE0-9845-C5A589FB1ADD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE876268-9E20-4AE0-9845-C5A589FB1ADD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE876268-9E20-4AE0-9845-C5A589FB1ADD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54DFF7B2-E0DF-47F3-B7D5-F5BB0EB0409E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54DFF7B2-E0DF-47F3-B7D5-F5BB0EB0409E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54DFF7B2-E0DF-47F3-B7D5-F5BB0EB0409E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54DFF7B2-E0DF-47F3-B7D5-F5BB0EB0409E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

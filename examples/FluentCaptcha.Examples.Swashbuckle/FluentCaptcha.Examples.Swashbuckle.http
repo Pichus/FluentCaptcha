@@ -1,0 +1,6 @@
+@FluentCaptcha.Examples.Swashbuckle_HostAddress = http://localhost:5040
+
+GET {{FluentCaptcha.Examples.Swashbuckle_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

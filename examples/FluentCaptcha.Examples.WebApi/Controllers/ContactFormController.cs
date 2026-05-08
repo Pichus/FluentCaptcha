@@ -1,6 +1,6 @@
 using FluentCaptcha.Core.Attributes;
 using FluentCaptcha.Dummy;
-using FluentCaptcha.Examples.WebApi.Models;
+using FluentCaptcha.Examples.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FluentCaptcha.Examples.WebApi.Controllers;

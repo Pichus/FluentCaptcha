@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace FluentCaptcha.Examples.WebApi.Models;
+namespace FluentCaptcha.Examples.Shared.Models;
 
 public class ContactFormSubmission
 {
