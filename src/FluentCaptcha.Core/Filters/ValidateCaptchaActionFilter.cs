@@ -48,6 +48,8 @@ public class ValidateCaptchaActionFilter : IAsyncActionFilter
             context.Result = new BadRequestObjectResult(problemDetails);
             return;
         }
+        
+        context.HttpContext.Items[FluentCaptchaConstants.ValidationResultHttpContextItemsKey] = validationResult;
 
         await next();
     }
