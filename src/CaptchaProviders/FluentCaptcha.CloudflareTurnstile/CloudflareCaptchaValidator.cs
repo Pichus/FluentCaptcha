@@ -25,9 +25,13 @@ public class CloudflareCaptchaValidator : ICaptchaValidator
 
     public async Task<CaptchaValidationResult> ValidateAsync(string captchaResponseToken, string? remoteIp = null)
     {
+        string idempotencyKey = Guid.NewGuid().ToString();
+
         var parameters = new Dictionary<string, string>
         {
-            { "secret", _cloudflareTurnstileOptions.SecretKey }, { "response", captchaResponseToken }
+            { "secret", _cloudflareTurnstileOptions.SecretKey },
+            { "response", captchaResponseToken },
+            { "idempotency_key", idempotencyKey }
         };
 
         if (!string.IsNullOrEmpty(remoteIp))
@@ -37,32 +41,60 @@ public class CloudflareCaptchaValidator : ICaptchaValidator
 
         var postContent = new FormUrlEncodedContent(parameters);
 
-        using var response = await SendTokenVerificationRequestAsync(postContent);
+        int maxAttempts = 1;
 
-        if (!response.IsSuccessStatusCode)
+        if (_cloudflareTurnstileOptions.RetryOnFailure)
         {
-            const string errorMessage = "Cloudflare Turnstile API verification failed.";
-            _logger.LogError(
-                errorMessage + " Status code: {StatusCode}. Response: {Response}",
-                response.StatusCode,
-                await response.Content.ReadAsStringAsync());
-
-            return CaptchaValidationResult.Failure(errorMessage);
+            maxAttempts += _cloudflareTurnstileOptions.MaxRetryCount;
         }
 
-        var deserializedResponse = await DeserializeResponseAsync(response);
-
-        if (!deserializedResponse.Success)
+        for (int attempt = 1; attempt <= maxAttempts; attempt++)
         {
-            if (deserializedResponse.ErrorCodes is null || deserializedResponse.ErrorCodes.Count == 0)
+            try
             {
-                return CaptchaValidationResult.Failure("CAPTCHA token validation failed. No error codes provided.");
-            }
+                using var response = await SendTokenVerificationRequestAsync(postContent);
 
-            return CaptchaValidationResult.Failure(deserializedResponse.ErrorCodes);
+                if (!response.IsSuccessStatusCode)
+                {
+                    const string errorMessage = "Cloudflare Turnstile API verification failed.";
+                    _logger.LogError(
+                        errorMessage + " Status code: {StatusCode}. Response: {Response}",
+                        response.StatusCode,
+                        await response.Content.ReadAsStringAsync());
+
+                    return CaptchaValidationResult.Failure(errorMessage);
+                }
+
+                var deserializedResponse = await DeserializeResponseAsync(response);
+
+                if (deserializedResponse.Success)
+                {
+                    return CaptchaValidationResult.Success();
+                }
+
+                if (attempt == maxAttempts)
+                {
+                    if (deserializedResponse.ErrorCodes is null || deserializedResponse.ErrorCodes.Count == 0)
+                    {
+                        return CaptchaValidationResult.Failure(
+                            "CAPTCHA token validation failed. No error codes provided.");
+                    }
+
+                    return CaptchaValidationResult.Failure(deserializedResponse.ErrorCodes);
+                }
+
+                await Task.Delay((int)Math.Pow(2, attempt) * 1000);
+            }
+            catch (FluentCaptchaNetworkErrorException networkErrorException)
+            {
+                if (attempt == maxAttempts)
+                {
+                    return CaptchaValidationResult.Failure(networkErrorException.Message);
+                }
+            }
         }
 
-        return CaptchaValidationResult.Success();
+        return CaptchaValidationResult.Failure("CAPTCHA token validation failed. No error codes provided.");
     }
 
 
