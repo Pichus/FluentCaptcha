@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace FluentCaptcha.Core;
+namespace FluentCaptcha.Core.Filters;
 
 public class ValidateCaptchaActionFilter : IAsyncActionFilter
 {

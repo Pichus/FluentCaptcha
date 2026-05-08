@@ -1,11 +1,12 @@
 using FluentCaptcha.Core.Abstractions;
 using FluentCaptcha.Core.Exceptions;
+using FluentCaptcha.Core.Filters;
 using FluentCaptcha.Core.Options;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace FluentCaptcha.Core;
+namespace FluentCaptcha.Core.Attributes;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class ValidateCaptchaAttribute : Attribute, IFilterFactory
