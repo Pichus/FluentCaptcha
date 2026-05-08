@@ -7,21 +7,23 @@ namespace FluentCaptcha.Core.Filters;
 
 public class ValidateCaptchaActionFilter : IAsyncActionFilter
 {
+    private readonly string _captchaResponseTokenHeaderName;
     private readonly ICaptchaValidator _captchaValidator;
 
-    public ValidateCaptchaActionFilter(ICaptchaValidator captchaValidator)
+    public ValidateCaptchaActionFilter(
+        ICaptchaValidator captchaValidator,
+        string captchaResponseTokenHeaderName)
     {
         _captchaValidator = captchaValidator;
+        _captchaResponseTokenHeaderName = captchaResponseTokenHeaderName;
     }
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         var cancellationToken = context.HttpContext.RequestAborted;
 
-        var headerName = FluentCaptchaConstants.CaptchaResponseTokenRequestHeaderName;
-
         var requestContainsCaptchaResponseTokenHeader = context.HttpContext.Request.Headers
-            .TryGetValue(headerName, out var captchaResponseToken);
+            .TryGetValue(_captchaResponseTokenHeaderName, out var captchaResponseToken);
 
         if (!requestContainsCaptchaResponseTokenHeader || string.IsNullOrEmpty(captchaResponseToken.ToString()))
         {
@@ -29,7 +31,7 @@ public class ValidateCaptchaActionFilter : IAsyncActionFilter
             {
                 Title = "Missing required header",
                 Status = StatusCodes.Status400BadRequest,
-                Detail = $"{headerName} request header is required for this endpoint"
+                Detail = $"{_captchaResponseTokenHeaderName} request header is required for this endpoint"
             };
             context.Result = new BadRequestObjectResult(problemDetails);
             return;

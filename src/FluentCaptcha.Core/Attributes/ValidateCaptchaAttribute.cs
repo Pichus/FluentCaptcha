@@ -12,6 +12,9 @@ namespace FluentCaptcha.Core.Attributes;
 public class ValidateCaptchaAttribute : Attribute, IFilterFactory
 {
     public string? CaptchaProvider { get; set; }
+
+    public string? CaptchaResponseTokenRequestHeaderName { get; set; }
+
     public bool IsReusable => false;
 
     public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
@@ -22,6 +25,8 @@ public class ValidateCaptchaAttribute : Attribute, IFilterFactory
         {
             throw new FluentCaptchaConfigurationException("No config provided for fluent captcha.");
         }
+
+        CaptchaResponseTokenRequestHeaderName ??= FluentCaptchaConstants.CaptchaResponseTokenRequestHeaderName;
 
         var captchaProviderName = fluentCaptchaOptions.DefaultCaptchaProvider;
 
@@ -39,6 +44,6 @@ public class ValidateCaptchaAttribute : Attribute, IFilterFactory
                 $"No captcha providers registered with name '{captchaProviderName}'");
         }
 
-        return new ValidateCaptchaActionFilter(captchaProviderInstance);
+        return new ValidateCaptchaActionFilter(captchaProviderInstance, CaptchaResponseTokenRequestHeaderName);
     }
 }

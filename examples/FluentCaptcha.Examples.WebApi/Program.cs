@@ -10,13 +10,14 @@ builder.Services.AddOpenApiDocument(options =>
 {
     options.IntegrateWithFluentCaptcha();
 });
-builder.Services.AddFluentCaptcha(captchaOptions =>
+builder.Services.AddFluentCaptcha(options =>
 {
-    captchaOptions.UseCloudflareTurnstile(cloudflareOptions =>
+    options.UseCloudflareTurnstile(cloudflareOptions =>
     {
         cloudflareOptions.SecretKey = CloudflareTurnstileConstants.TestSecretKeys.AlwaysPassValidation;
     });
-    captchaOptions.AddDummy();
+
+    options.AddDummy();
 });
 builder.Services.AddControllers();
 

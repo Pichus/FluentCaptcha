@@ -12,14 +12,19 @@ public class ValidateCaptchaFilterOperationProcessor : IOperationProcessor
 {
     public bool Process(OperationProcessorContext context)
     {
-        if (context.MethodInfo.GetCustomAttribute<ValidateCaptchaAttribute>() is null)
+        var validateCaptchaAttribute = context.MethodInfo.GetCustomAttribute<ValidateCaptchaAttribute>();
+
+        if (validateCaptchaAttribute is null)
         {
             return true;
         }
 
+        var requestHeaderName = validateCaptchaAttribute.CaptchaResponseTokenRequestHeaderName ??
+                                FluentCaptchaConstants.CaptchaResponseTokenRequestHeaderName;
+
         context.OperationDescription.Operation.Parameters.Add(new OpenApiParameter
         {
-            Name = FluentCaptchaConstants.CaptchaResponseTokenRequestHeaderName,
+            Name = requestHeaderName,
             Kind = OpenApiParameterKind.Header,
             Type = JsonObjectType.String,
             IsRequired = true,
