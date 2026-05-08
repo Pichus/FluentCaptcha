@@ -12,15 +12,27 @@ public class FluentCaptchaConfigurator : IFluentCaptchaConfigurator
         _services = services;
     }
 
-    public void AddCaptchaProvider<TCaptchaProvider>()
+    public string? DefaultCaptchaProvider { get; private set; }
+
+    public void AddCaptchaProvider<TCaptchaProvider>(string captchaProviderName, bool asTypedHttpClient = false)
         where TCaptchaProvider : class, ICaptchaValidator
     {
-        _services.AddHttpClient<ICaptchaValidator, TCaptchaProvider>();
+        if (asTypedHttpClient)
+        {
+            _services.AddHttpClient<ICaptchaValidator, TCaptchaProvider>(captchaProviderName).AddAsKeyed();
+        }
+
+        _services.AddKeyedScoped<ICaptchaValidator, TCaptchaProvider>(captchaProviderName);
     }
 
     public void AddOptions<TOptions>(Action<TOptions> configureOptions)
         where TOptions : class
     {
         _services.Configure(configureOptions);
+    }
+
+    public void SetDefaultCaptchaProvider(string captchaProvider)
+    {
+        DefaultCaptchaProvider = captchaProvider;
     }
 }

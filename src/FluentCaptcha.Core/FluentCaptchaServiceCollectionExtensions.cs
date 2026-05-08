@@ -1,4 +1,4 @@
-using FluentCaptcha.Core.Abstractions;
+using FluentCaptcha.Core.Options;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FluentCaptcha.Core;
@@ -12,6 +12,11 @@ public static class FluentCaptchaServiceCollectionExtensions
         var configurator = new FluentCaptchaConfigurator(services);
 
         configure?.Invoke(configurator);
+
+        services.Configure<FluentCaptchaOptions>(options =>
+        {
+            options.DefaultCaptchaProvider = configurator.DefaultCaptchaProvider;
+        });
 
         return services;
     }
