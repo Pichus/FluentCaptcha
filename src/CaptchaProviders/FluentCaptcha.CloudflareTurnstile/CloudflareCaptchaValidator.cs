@@ -113,20 +113,20 @@ public class CloudflareCaptchaValidator : ICaptchaValidator
 
             return response;
         }
-        catch (Exception invalidUriException) when (invalidUriException is InvalidOperationException
-                                                        or UriFormatException)
+        catch (HttpRequestException httpRequestException)
+        {
+            const string errorMessage = "Cloudflare Turnstile API request failed.";
+            _logger.LogError(httpRequestException, errorMessage);
+
+            throw new FluentCaptchaNetworkErrorException(errorMessage, httpRequestException);
+        }
+        catch (Exception invalidUriException)
+            when (invalidUriException is InvalidOperationException or UriFormatException)
         {
             const string errorMessage = "Invalid Cloudflare Turnstile API endpoint URL format.";
             _logger.LogCritical(invalidUriException, errorMessage);
 
             throw new FluentCaptchaConfigurationException(errorMessage, invalidUriException);
-        }
-        catch (Exception requestException) when (requestException is HttpRequestException or OperationCanceledException)
-        {
-            const string errorMessage = "Cloudflare Turnstile API request failed.";
-            _logger.LogError(requestException, errorMessage);
-
-            throw new FluentCaptchaNetworkErrorException(errorMessage, requestException);
         }
     }
 
@@ -149,10 +149,8 @@ public class CloudflareCaptchaValidator : ICaptchaValidator
 
             return deserializedResponse;
         }
-        catch (Exception exception) when (exception is JsonException
-                                              or NotSupportedException
-                                              or ArgumentNullException
-                                              or OperationCanceledException)
+        catch (Exception exception)
+            when (exception is JsonException or NotSupportedException or ArgumentNullException)
         {
             const string errorMessage = "Failed to deserialize Cloudflare Turnstile API response.";
             _logger.LogError(exception, errorMessage);
