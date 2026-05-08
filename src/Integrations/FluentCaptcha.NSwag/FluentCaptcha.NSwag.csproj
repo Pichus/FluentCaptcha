@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="NSwag.Generation" Version="14.7.1"/>
+        <PackageReference Include="NSwag.Generation.AspNetCore" Version="14.7.1"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\FluentCaptcha.Core\FluentCaptcha.Core.csproj" />
+    </ItemGroup>
+
+</Project>

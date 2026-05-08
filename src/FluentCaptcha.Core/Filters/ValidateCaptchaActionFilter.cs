@@ -18,8 +18,10 @@ public class ValidateCaptchaActionFilter : IAsyncActionFilter
     {
         var cancellationToken = context.HttpContext.RequestAborted;
 
+        var headerName = FluentCaptchaConstants.CaptchaResponseTokenRequestHeaderName;
+
         var requestContainsCaptchaResponseTokenHeader = context.HttpContext.Request.Headers
-            .TryGetValue("X-Captcha-Response", out var captchaResponseToken);
+            .TryGetValue(headerName, out var captchaResponseToken);
 
         if (!requestContainsCaptchaResponseTokenHeader || string.IsNullOrEmpty(captchaResponseToken.ToString()))
         {
@@ -27,7 +29,7 @@ public class ValidateCaptchaActionFilter : IAsyncActionFilter
             {
                 Title = "Missing required header",
                 Status = StatusCodes.Status400BadRequest,
-                Detail = "X-Captcha-Response request header is required for this endpoint"
+                Detail = $"{headerName} request header is required for this endpoint"
             };
             context.Result = new BadRequestObjectResult(problemDetails);
             return;
@@ -48,7 +50,7 @@ public class ValidateCaptchaActionFilter : IAsyncActionFilter
             context.Result = new BadRequestObjectResult(problemDetails);
             return;
         }
-        
+
         context.HttpContext.Items[FluentCaptchaConstants.ValidationResultHttpContextItemsKey] = validationResult;
 
         await next();
