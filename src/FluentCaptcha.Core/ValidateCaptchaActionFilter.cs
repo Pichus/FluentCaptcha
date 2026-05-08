@@ -25,7 +25,7 @@ public class ValidateCaptchaActionFilter : IAsyncActionFilter
             {
                 Title = "Missing required header",
                 Status = StatusCodes.Status400BadRequest,
-                Detail = "X-Captcha-Response request header is required for this endpoint",
+                Detail = "X-Captcha-Response request header is required for this endpoint"
             };
             context.Result = new BadRequestObjectResult(problemDetails);
             return;
