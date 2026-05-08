@@ -16,6 +16,8 @@ public class ValidateCaptchaActionFilter : IAsyncActionFilter
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
+        var cancellationToken = context.HttpContext.RequestAborted;
+
         var requestContainsCaptchaResponseTokenHeader = context.HttpContext.Request.Headers
             .TryGetValue("X-Captcha-Response", out var captchaResponseToken);
 
@@ -31,7 +33,9 @@ public class ValidateCaptchaActionFilter : IAsyncActionFilter
             return;
         }
 
-        var validationResult = await _captchaValidator.ValidateAsync(captchaResponseToken.ToString());
+        var validationResult = await _captchaValidator.ValidateAsync(
+            captchaResponseToken.ToString(),
+            cancellationToken: cancellationToken);
 
         if (validationResult.IsFailure)
         {

@@ -23,9 +23,12 @@ public class CloudflareCaptchaValidator : ICaptchaValidator
         _cloudflareTurnstileOptions = turnstileCaptchaOptions.Value;
     }
 
-    public async Task<CaptchaValidationResult> ValidateAsync(string captchaResponseToken, string? remoteIp = null)
+    public async Task<CaptchaValidationResult> ValidateAsync(
+        string captchaResponseToken,
+        string? remoteIp = null,
+        CancellationToken cancellationToken = default)
     {
-        string idempotencyKey = Guid.NewGuid().ToString();
+        var idempotencyKey = Guid.NewGuid().ToString();
 
         var parameters = new Dictionary<string, string>
         {
@@ -41,18 +44,19 @@ public class CloudflareCaptchaValidator : ICaptchaValidator
 
         var postContent = new FormUrlEncodedContent(parameters);
 
-        int maxAttempts = 1;
+        var maxAttempts = 1;
 
         if (_cloudflareTurnstileOptions.RetryOnFailure)
         {
             maxAttempts += _cloudflareTurnstileOptions.MaxRetryCount;
         }
 
-        for (int attempt = 1; attempt <= maxAttempts; attempt++)
+        for (var attempt = 1; attempt <= maxAttempts; attempt++)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             try
             {
-                using var response = await SendTokenVerificationRequestAsync(postContent);
+                using var response = await SendTokenVerificationRequestAsync(postContent, cancellationToken);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -60,12 +64,12 @@ public class CloudflareCaptchaValidator : ICaptchaValidator
                     _logger.LogError(
                         errorMessage + " Status code: {StatusCode}. Response: {Response}",
                         response.StatusCode,
-                        await response.Content.ReadAsStringAsync());
+                        await response.Content.ReadAsStringAsync(cancellationToken));
 
                     return CaptchaValidationResult.Failure(errorMessage);
                 }
 
-                var deserializedResponse = await DeserializeResponseAsync(response);
+                var deserializedResponse = await DeserializeResponseAsync(response, cancellationToken);
 
                 if (deserializedResponse.Success)
                 {
@@ -83,7 +87,7 @@ public class CloudflareCaptchaValidator : ICaptchaValidator
                     return CaptchaValidationResult.Failure(deserializedResponse.ErrorCodes);
                 }
 
-                await Task.Delay((int)Math.Pow(2, attempt) * 1000);
+                await Task.Delay((int)Math.Pow(2, attempt) * 1000, cancellationToken);
             }
             catch (FluentCaptchaNetworkErrorException networkErrorException)
             {
@@ -98,11 +102,14 @@ public class CloudflareCaptchaValidator : ICaptchaValidator
     }
 
 
-    private async Task<HttpResponseMessage> SendTokenVerificationRequestAsync(FormUrlEncodedContent request)
+    private async Task<HttpResponseMessage> SendTokenVerificationRequestAsync(
+        FormUrlEncodedContent request,
+        CancellationToken cancellationToken = default)
     {
         try
         {
-            var response = await _httpClient.PostAsync(_cloudflareTurnstileOptions.SiteVerifyUrl, request);
+            var response = await _httpClient.PostAsync(
+                _cloudflareTurnstileOptions.SiteVerifyUrl, request, cancellationToken);
 
             return response;
         }
@@ -123,11 +130,14 @@ public class CloudflareCaptchaValidator : ICaptchaValidator
         }
     }
 
-    private async Task<CaptchaVerificationResponse> DeserializeResponseAsync(HttpResponseMessage response)
+    private async Task<CaptchaVerificationResponse> DeserializeResponseAsync(
+        HttpResponseMessage response,
+        CancellationToken cancellationToken = default)
     {
         try
         {
-            var deserializedResponse = await response.Content.ReadFromJsonAsync<CaptchaVerificationResponse>();
+            var deserializedResponse =
+                await response.Content.ReadFromJsonAsync<CaptchaVerificationResponse>(cancellationToken);
 
             if (deserializedResponse is null)
             {
@@ -137,7 +147,7 @@ public class CloudflareCaptchaValidator : ICaptchaValidator
                 throw new FluentCaptchaErrorException(errorMessage);
             }
 
-            return deserializedResponse!;
+            return deserializedResponse;
         }
         catch (Exception exception) when (exception is JsonException
                                               or NotSupportedException
