@@ -15,7 +15,9 @@ public class CloudflareCaptchaValidator : ICaptchaValidator
     private readonly HttpClient _httpClient;
     private readonly ILogger<CloudflareCaptchaValidator> _logger;
 
-    public CloudflareCaptchaValidator(HttpClient httpClient, ILogger<CloudflareCaptchaValidator> logger,
+    public CloudflareCaptchaValidator(
+        HttpClient httpClient,
+        ILogger<CloudflareCaptchaValidator> logger,
         IOptions<CloudflareTurnstileOptions> turnstileCaptchaOptions)
     {
         _httpClient = httpClient;
@@ -26,6 +28,7 @@ public class CloudflareCaptchaValidator : ICaptchaValidator
     public async Task<CaptchaValidationResult> ValidateAsync(
         string captchaResponseToken,
         string? remoteIp = null,
+        string? expectedAction = null,
         CancellationToken cancellationToken = default)
     {
         var idempotencyKey = Guid.NewGuid().ToString();
@@ -58,7 +61,7 @@ public class CloudflareCaptchaValidator : ICaptchaValidator
             CaptchaValidationResult response;
             try
             {
-                response = await PerformRequestToCloudflareTurnstileApi(postContent, cancellationToken);
+                response = await PerformRequestToCloudflareTurnstileApi(postContent, expectedAction, cancellationToken);
             }
             catch (FluentCaptchaNetworkErrorException networkErrorException)
             {
@@ -68,7 +71,7 @@ public class CloudflareCaptchaValidator : ICaptchaValidator
                     return response;
                 }
             }
-            
+
             if (response.IsSuccess || currentAttemptNumber == maxNumberOfAttempts)
             {
                 return response;
@@ -81,7 +84,7 @@ public class CloudflareCaptchaValidator : ICaptchaValidator
     }
 
     private async Task<CaptchaValidationResult> PerformRequestToCloudflareTurnstileApi(
-        FormUrlEncodedContent postContent, CancellationToken cancellationToken = default)
+        FormUrlEncodedContent postContent, string? expectedAction = null, CancellationToken cancellationToken = default)
     {
         using var response = await SendTokenVerificationRequestAsync(postContent, cancellationToken);
 
@@ -98,18 +101,43 @@ public class CloudflareCaptchaValidator : ICaptchaValidator
 
         var deserializedResponse = await DeserializeResponseAsync(response, cancellationToken);
 
-        if (deserializedResponse.Success)
+        var clientAction = deserializedResponse.Action;
+        
+        var expectedActionIsSet = expectedAction is not null;
+
+        var clientActionReceived = clientAction is not null;
+        
+        if (expectedActionIsSet && !clientActionReceived)
         {
-            return CaptchaValidationResult.Success();
+            const string error = "Expected captcha action is set, but no actual action is received from the client.";
+            _logger.LogWarning(error);
         }
 
-        if (deserializedResponse.ErrorCodes is null || deserializedResponse.ErrorCodes.Count == 0)
+        if (clientActionReceived && !expectedActionIsSet)
+        {
+            const string error =
+                "Actual action is received from the client, but not expected action is configured for this endpoint.";
+            _logger.LogWarning(error);
+        }
+
+        if (clientActionReceived && expectedActionIsSet && clientAction != expectedAction)
         {
             return CaptchaValidationResult.Failure(
-                "CAPTCHA token validation failed. No error codes provided.");
+                "CAPTCHA token validation failed. Provided action does not match the expected one");
         }
 
-        return CaptchaValidationResult.Failure(deserializedResponse.ErrorCodes);
+        if (!deserializedResponse.Success)
+        {
+            if (deserializedResponse.ErrorCodes is null || deserializedResponse.ErrorCodes.Count == 0)
+            {
+                return CaptchaValidationResult.Failure(
+                    "CAPTCHA token validation failed. No error codes provided.");
+            }
+
+            return CaptchaValidationResult.Failure(deserializedResponse.ErrorCodes);
+        }
+
+        return CaptchaValidationResult.Success();
     }
 
     private async Task<HttpResponseMessage> SendTokenVerificationRequestAsync(
@@ -173,6 +201,9 @@ public class CloudflareCaptchaValidator : ICaptchaValidator
     {
         [JsonPropertyName("success")]
         public bool Success { get; init; }
+
+        [JsonPropertyName("action")]
+        public string? Action { get; init; }
 
         [JsonPropertyName("error-codes")]
         public List<string>? ErrorCodes { get; init; }
