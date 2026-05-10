@@ -16,6 +16,14 @@ public class ContactFormController : ControllerBase
         _logger = logger;
     }
 
+    [HttpPost("cf-body")]
+    [ValidateCaptcha]
+    public async Task<IActionResult> SubmitContactFormAsyncCfBody(
+        [FromBody] TestModel testModel)
+    {
+        return Ok(testModel.Name);
+    }
+
     [HttpPost("cf")]
     [ValidateCaptcha(CaptchaResponseTokenRequestHeaderName = "cf-token")]
     [ProducesResponseType<ContactFormSubmission>(StatusCodes.Status200OK)]

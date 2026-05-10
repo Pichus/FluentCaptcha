@@ -1,5 +1,6 @@
 using FluentCaptcha.CloudflareTurnstile;
 using FluentCaptcha.Core;
+using FluentCaptcha.Core.Enums;
 using FluentCaptcha.Dummy;
 using FluentCaptcha.NSwag;
 
@@ -18,6 +19,8 @@ builder.Services.AddFluentCaptcha(options =>
     });
 
     options.AddDummy();
+
+    options.DefaultCaptchaResponseTokenSource = CaptchaResponseTokenSource.RequestBody;
 });
 builder.Services.AddControllers();
 
