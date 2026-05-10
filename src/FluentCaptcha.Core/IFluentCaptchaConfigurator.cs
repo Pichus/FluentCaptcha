@@ -10,8 +10,8 @@ public interface IFluentCaptchaConfigurator
 
     void AddOptions<TOptions>(Action<TOptions> configureOptions)
         where TOptions : class;
+    
+    string? DefaultCaptchaProvider { get; set; }
 
-    void SetDefaultCaptchaProvider(string captchaProvider);
-
-    void SetDefaultCaptchaResponseTokenSource(CaptchaResponseTokenSource source);
+    CaptchaResponseTokenSource DefaultCaptchaResponseTokenSource { get; set; }
 }

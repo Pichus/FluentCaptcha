@@ -13,9 +13,9 @@ public class FluentCaptchaConfigurator : IFluentCaptchaConfigurator
         _services = services;
     }
 
-    public string? DefaultCaptchaProvider { get; private set; }
+    public string? DefaultCaptchaProvider { get; set; }
 
-    public CaptchaResponseTokenSource DefaultCaptchaResponseTokenSource { get; private set; } =
+    public CaptchaResponseTokenSource DefaultCaptchaResponseTokenSource { get; set; } =
         CaptchaResponseTokenSource.RequestHeader;
 
     public void AddCaptchaProvider<TCaptchaProvider>(string captchaProviderName, bool asTypedHttpClient = false)
@@ -35,15 +35,5 @@ public class FluentCaptchaConfigurator : IFluentCaptchaConfigurator
         where TOptions : class
     {
         _services.Configure(configureOptions);
-    }
-
-    public void SetDefaultCaptchaProvider(string captchaProvider)
-    {
-        DefaultCaptchaProvider = captchaProvider;
-    }
-
-    public void SetDefaultCaptchaResponseTokenSource(CaptchaResponseTokenSource source)
-    {
-        DefaultCaptchaResponseTokenSource = source;
     }
 }

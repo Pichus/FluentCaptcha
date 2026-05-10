@@ -10,7 +10,7 @@ public static class FluentCaptchaCloudflareTurnstileConfiguratorExtensions
         Action<CloudflareTurnstileOptions>? configureOptions = null)
     {
         configurator.AddCloudflareTurnstile(configureOptions);
-        configurator.SetDefaultCaptchaProvider(CloudflareTurnstileConstants.CaptchaProviderName);
+        configurator.DefaultCaptchaProvider = CloudflareTurnstileConstants.CaptchaProviderName;
 
         return configurator;
     }

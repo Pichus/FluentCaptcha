@@ -8,7 +8,7 @@ public static class FluentCaptchaDummyConfiguratorExtensions
         this IFluentCaptchaConfigurator configurator)
     {
         configurator.AddDummy();
-        configurator.SetDefaultCaptchaProvider(DummyConstants.CaptchaProviderName);
+        configurator.DefaultCaptchaProvider = DummyConstants.CaptchaProviderName;
 
         return configurator;
     }
