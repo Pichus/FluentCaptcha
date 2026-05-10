@@ -11,6 +11,8 @@ namespace FluentCaptcha.Core.Attributes;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class ValidateCaptchaAttribute : Attribute, IFilterFactory
 {
+    public string? ExpectedAction { get; set; }
+    
     public string? CaptchaProvider { get; set; }
 
     public string? CaptchaResponseTokenRequestHeaderName { get; set; }
