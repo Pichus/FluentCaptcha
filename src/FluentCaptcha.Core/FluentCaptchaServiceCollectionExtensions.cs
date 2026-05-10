@@ -16,6 +16,7 @@ public static class FluentCaptchaServiceCollectionExtensions
         services.Configure<FluentCaptchaOptions>(options =>
         {
             options.DefaultCaptchaProvider = configurator.DefaultCaptchaProvider;
+            options.DefaultCaptchaResponseTokenSource = configurator.DefaultCaptchaResponseTokenSource;
         });
 
         return services;

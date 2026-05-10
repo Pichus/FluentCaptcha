@@ -1,4 +1,5 @@
 using FluentCaptcha.Core.Abstractions;
+using FluentCaptcha.Core.Enums;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FluentCaptcha.Core;
@@ -13,6 +14,9 @@ public class FluentCaptchaConfigurator : IFluentCaptchaConfigurator
     }
 
     public string? DefaultCaptchaProvider { get; private set; }
+
+    public CaptchaResponseTokenSource DefaultCaptchaResponseTokenSource { get; private set; } =
+        CaptchaResponseTokenSource.RequestHeader;
 
     public void AddCaptchaProvider<TCaptchaProvider>(string captchaProviderName, bool asTypedHttpClient = false)
         where TCaptchaProvider : class, ICaptchaValidator
@@ -36,5 +40,10 @@ public class FluentCaptchaConfigurator : IFluentCaptchaConfigurator
     public void SetDefaultCaptchaProvider(string captchaProvider)
     {
         DefaultCaptchaProvider = captchaProvider;
+    }
+
+    public void SetDefaultCaptchaResponseTokenSource(CaptchaResponseTokenSource source)
+    {
+        DefaultCaptchaResponseTokenSource = source;
     }
 }

@@ -1,4 +1,5 @@
 using FluentCaptcha.Core.Abstractions;
+using FluentCaptcha.Core.Enums;
 using FluentCaptcha.Core.Exceptions;
 using FluentCaptcha.Core.Filters;
 using FluentCaptcha.Core.Options;
@@ -12,7 +13,9 @@ namespace FluentCaptcha.Core.Attributes;
 public class ValidateCaptchaAttribute : Attribute, IFilterFactory
 {
     public string? ExpectedAction { get; set; }
-    
+
+    public CaptchaResponseTokenSource? CaptchaResponseTokenSource { get; set; }
+
     public string? CaptchaProvider { get; set; }
 
     public string? CaptchaResponseTokenRequestHeaderName { get; set; }
@@ -46,6 +49,12 @@ public class ValidateCaptchaAttribute : Attribute, IFilterFactory
                 $"No captcha providers registered with name '{captchaProviderName}'");
         }
 
-        return new ValidateCaptchaActionFilter(captchaProviderInstance, CaptchaResponseTokenRequestHeaderName);
+        var captchaResponseTokenSource =
+            CaptchaResponseTokenSource ?? fluentCaptchaOptions.DefaultCaptchaResponseTokenSource;
+
+        return new ValidateCaptchaActionFilter(
+            captchaProviderInstance,
+            CaptchaResponseTokenRequestHeaderName,
+            captchaResponseTokenSource);
     }
 }

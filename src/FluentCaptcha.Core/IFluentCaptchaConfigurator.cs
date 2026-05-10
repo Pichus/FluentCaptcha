@@ -1,4 +1,5 @@
 using FluentCaptcha.Core.Abstractions;
+using FluentCaptcha.Core.Enums;
 
 namespace FluentCaptcha.Core;
 
@@ -11,4 +12,6 @@ public interface IFluentCaptchaConfigurator
         where TOptions : class;
 
     void SetDefaultCaptchaProvider(string captchaProvider);
+
+    void SetDefaultCaptchaResponseTokenSource(CaptchaResponseTokenSource source);
 }
