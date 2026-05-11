@@ -14,15 +14,18 @@ public class ValidateCaptchaActionFilter : IAsyncActionFilter
     private readonly string _captchaResponseTokenHeaderName;
     private readonly CaptchaResponseTokenSource _captchaResponseTokenSource;
     private readonly ICaptchaValidator _captchaValidator;
+    private readonly string? _expectedAction;
 
     public ValidateCaptchaActionFilter(
         ICaptchaValidator captchaValidator,
         string captchaResponseTokenHeaderName,
-        CaptchaResponseTokenSource captchaResponseTokenSource)
+        CaptchaResponseTokenSource captchaResponseTokenSource,
+        string? expectedAction = null)
     {
         _captchaValidator = captchaValidator;
         _captchaResponseTokenHeaderName = captchaResponseTokenHeaderName;
         _captchaResponseTokenSource = captchaResponseTokenSource;
+        _expectedAction = expectedAction;
     }
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -74,6 +77,7 @@ public class ValidateCaptchaActionFilter : IAsyncActionFilter
 
         var validationResult = await _captchaValidator.ValidateAsync(
             captchaResponseToken,
+            expectedAction: _expectedAction,
             cancellationToken: cancellationToken);
 
         if (validationResult.IsFailure)

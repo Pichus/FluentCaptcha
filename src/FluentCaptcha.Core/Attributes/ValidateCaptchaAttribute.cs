@@ -55,6 +55,7 @@ public class ValidateCaptchaAttribute : Attribute, IFilterFactory
         return new ValidateCaptchaActionFilter(
             captchaProviderInstance,
             CaptchaResponseTokenRequestHeaderName,
-            captchaResponseTokenSource);
+            captchaResponseTokenSource,
+            ExpectedAction);
     }
 }
