@@ -1,6 +1,9 @@
 namespace FluentCaptcha.Core.Attributes;
 
-[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Parameter)]
+/// <summary>
+///     Indicates that property is used to store captcha response token.
+/// </summary>
+[AttributeUsage(AttributeTargets.Property)]
 public class CaptchaResponseTokenAttribute : Attribute
 {
 }
