@@ -32,6 +32,8 @@ public class ValidateCaptchaActionFilter : IAsyncActionFilter
     {
         var cancellationToken = context.HttpContext.RequestAborted;
 
+        var remoteIp = context.HttpContext.Connection.RemoteIpAddress?.ToString();
+
         var captchaResponseToken = "";
 
         switch (_captchaResponseTokenSource)
@@ -77,8 +79,9 @@ public class ValidateCaptchaActionFilter : IAsyncActionFilter
 
         var validationResult = await _captchaValidator.ValidateAsync(
             captchaResponseToken,
-            expectedAction: _expectedAction,
-            cancellationToken: cancellationToken);
+            remoteIp,
+            _expectedAction,
+            cancellationToken);
 
         if (validationResult.IsFailure)
         {
