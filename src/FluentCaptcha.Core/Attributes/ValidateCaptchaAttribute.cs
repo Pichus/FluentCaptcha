@@ -27,7 +27,7 @@ public class ValidateCaptchaAttribute : Attribute, IFilterFactory
     /// <remarks>
     ///     By default, the default captcha response token source, set during fluent captcha configuration, is used.
     /// </remarks>
-    public CaptchaResponseTokenSource? CaptchaResponseTokenSource { get; set; }
+    public CaptchaResponseTokenSource CaptchaResponseTokenSource { get; set; } = CaptchaResponseTokenSource.Default;
 
     /// <summary>
     ///     Gets or sets the captcha provider name to be used for validation of endpoints that reach this endpoint.
@@ -84,8 +84,9 @@ public class ValidateCaptchaAttribute : Attribute, IFilterFactory
                 $"No captcha providers registered with name '{captchaProviderName}'");
         }
 
-        var captchaResponseTokenSource =
-            CaptchaResponseTokenSource ?? fluentCaptchaOptions.DefaultCaptchaResponseTokenSource;
+        var captchaResponseTokenSource = CaptchaResponseTokenSource == CaptchaResponseTokenSource.Default
+            ? fluentCaptchaOptions.DefaultCaptchaResponseTokenSource
+            : CaptchaResponseTokenSource;
 
         return new ValidateCaptchaActionFilter(
             captchaProviderInstance,
