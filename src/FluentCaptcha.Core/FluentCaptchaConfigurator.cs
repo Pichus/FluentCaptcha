@@ -18,6 +18,8 @@ public class FluentCaptchaConfigurator : IFluentCaptchaConfigurator
     public CaptchaResponseTokenSource DefaultCaptchaResponseTokenSource { get; set; } =
         CaptchaResponseTokenSource.RequestHeader;
 
+    public string? DefaultCaptchaResponseTokenRequestHeaderName { get; set; }
+
     public void AddCaptchaProvider<TCaptchaProvider>(string captchaProviderName, bool asTypedHttpClient = false)
         where TCaptchaProvider : class, ICaptchaValidator
     {

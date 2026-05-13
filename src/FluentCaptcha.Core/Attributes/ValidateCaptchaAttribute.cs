@@ -66,7 +66,7 @@ public class ValidateCaptchaAttribute : Attribute, IFilterFactory
             throw new FluentCaptchaConfigurationException("No config provided for fluent captcha.");
         }
 
-        CaptchaResponseTokenRequestHeaderName ??= FluentCaptchaConstants.CaptchaResponseTokenRequestHeaderName;
+        CaptchaResponseTokenRequestHeaderName ??= fluentCaptchaOptions.DefaultCaptchaResponseTokenRequestHeaderName;
 
         var captchaProviderName = fluentCaptchaOptions.DefaultCaptchaProvider;
 

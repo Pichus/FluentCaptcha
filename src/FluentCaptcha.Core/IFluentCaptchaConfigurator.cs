@@ -5,13 +5,15 @@ namespace FluentCaptcha.Core;
 
 public interface IFluentCaptchaConfigurator
 {
+    string? DefaultCaptchaProvider { get; set; }
+
+    CaptchaResponseTokenSource DefaultCaptchaResponseTokenSource { get; set; }
+
+    string? DefaultCaptchaResponseTokenRequestHeaderName { get; set; }
+
     void AddCaptchaProvider<TCaptchaProvider>(string captchaProviderName, bool asTypedHttpClient = false)
         where TCaptchaProvider : class, ICaptchaValidator;
 
     void AddOptions<TOptions>(Action<TOptions> configureOptions)
         where TOptions : class;
-    
-    string? DefaultCaptchaProvider { get; set; }
-
-    CaptchaResponseTokenSource DefaultCaptchaResponseTokenSource { get; set; }
 }

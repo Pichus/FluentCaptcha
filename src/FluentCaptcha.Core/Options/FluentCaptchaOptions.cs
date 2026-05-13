@@ -7,4 +7,7 @@ public class FluentCaptchaOptions
     public CaptchaResponseTokenSource DefaultCaptchaResponseTokenSource { get; set; }
 
     public string? DefaultCaptchaProvider { get; set; }
+
+    public string DefaultCaptchaResponseTokenRequestHeaderName { get; set; } =
+        FluentCaptchaConstants.CaptchaResponseTokenRequestHeaderName;
 }
