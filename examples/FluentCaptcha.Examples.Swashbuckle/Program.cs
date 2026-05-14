@@ -10,6 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddFluentCaptcha(options =>
 {
     options.UseCloudflareTurnstile();
+    options.DefaultCaptchaResponseTokenRequestHeaderName = "captcha-token";
 });
 
 builder.Services.AddSwaggerGen(options =>
