@@ -1,6 +1,8 @@
 using FluentCaptcha.Core.Abstractions;
 using FluentCaptcha.Core.Enums;
+using FluentCaptcha.Core.Options;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.ComponentModel;
 
 namespace FluentCaptcha.Core;
@@ -20,24 +22,47 @@ public class FluentCaptchaConfigurator
     public CaptchaResponseTokenSource DefaultCaptchaResponseTokenSource { get; set; } =
         CaptchaResponseTokenSource.RequestHeader;
 
-    public string? DefaultCaptchaResponseTokenRequestHeaderName { get; set; }
+    public string DefaultCaptchaResponseTokenRequestHeaderName { get; set; } =
+        FluentCaptchaConstants.DefaultCaptchaResponseTokenRequestHeaderName;
 
-    public void AddCaptchaProvider<TCaptchaProvider>(string captchaProviderName, bool asTypedHttpClient = false)
-        where TCaptchaProvider : class, ICaptchaValidator
+    public void AddCaptchaProvider<TCaptchaProvider>()
+        where TCaptchaProvider : class, ICaptchaProvider
     {
-        var serviceKey = FluentCaptchaConstants.LibraryPrefix + captchaProviderName;
-
-        if (asTypedHttpClient)
-        {
-            Services.AddHttpClient<ICaptchaValidator, TCaptchaProvider>(serviceKey).AddAsKeyed();
-        }
-
-        Services.AddKeyedScoped<ICaptchaValidator, TCaptchaProvider>(serviceKey);
+        Services.TryAddKeyedScoped<ICaptchaProvider, TCaptchaProvider>(
+            GetCaptchaProviderServiceKey<TCaptchaProvider>());
     }
 
-    public void AddOptions<TOptions>(Action<TOptions> configureOptions)
-        where TOptions : class
+    public void UseCaptchaProvider<TCaptchaProvider>()
+        where TCaptchaProvider : class, ICaptchaProvider
     {
-        Services.Configure(configureOptions);
+        Services.TryAddScoped<ICaptchaProvider>(serviceProvider =>
+            serviceProvider.GetRequiredKeyedService<ICaptchaProvider>(
+                GetCaptchaProviderServiceKey<TCaptchaProvider>()));
+        DefaultCaptchaProvider = TCaptchaProvider.Name;
+    }
+
+    public void AddCaptchaValidator<TCaptchaValidator>()
+        where TCaptchaValidator : class, ICaptchaValidator
+    {
+        Services.TryAddScoped<TCaptchaValidator>();
+    }
+
+    public void UseCaptchaValidator<TCaptchaValidator>()
+        where TCaptchaValidator : class, ICaptchaValidator
+    {
+        Services.TryAddScoped<ICaptchaValidator>(serviceProvider =>
+            serviceProvider.GetRequiredService<TCaptchaValidator>());
+    }
+
+    public FluentCaptchaConfigurator Configure(Action<FluentCaptchaOptions> options)
+    {
+        Services.Configure(options);
+        return this;
+    }
+
+    private static string GetCaptchaProviderServiceKey<TCaptchaProvider>()
+        where TCaptchaProvider : class, ICaptchaProvider
+    {
+        return FluentCaptchaConstants.LibraryPrefix + TCaptchaProvider.Name;
     }
 }
