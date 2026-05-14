@@ -1,8 +1,8 @@
-namespace FluentCaptcha.CloudflareTurnstile.Options;
+namespace FluentCaptcha.CloudflareTurnstile;
 
 public class CloudflareTurnstileOptions
 {
-    public required string SecretKey { get; set; }
+    public required string SecretKey { get; set; } = CloudflareTurnstileConstants.TestSecretKeys.AlwaysFailValidation;
 
     public required string SiteVerifyUrl { get; set; } = CloudflareTurnstileConstants.ApiUrl;
 
