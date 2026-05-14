@@ -76,7 +76,7 @@ public class ValidateCaptchaAttribute : Attribute, IFilterFactory
         }
 
         var serviceKey = FluentCaptchaConstants.LibraryPrefix + captchaProviderName;
-        var captchaProviderInstance = serviceProvider.GetKeyedService<ICaptchaValidator>(serviceKey);
+        var captchaProviderInstance = serviceProvider.GetKeyedService<ICaptchaProvider>(serviceKey);
 
         if (captchaProviderInstance is null)
         {
