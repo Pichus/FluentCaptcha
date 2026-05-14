@@ -1,4 +1,5 @@
 using FluentCaptcha.Core.Attributes;
+using FluentCaptcha.Core.Enums;
 using FluentCaptcha.Dummy;
 using FluentCaptcha.Examples.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ public class ContactFormController : ControllerBase
     }
 
     [HttpPost("cf-body")]
-    [ValidateCaptcha]
+    [ValidateCaptcha(CaptchaResponseTokenSource = CaptchaResponseTokenSource.RequestBody)]
     public async Task<IActionResult> SubmitContactFormAsyncCfBody(
         [FromBody] TestModel testModel)
     {
@@ -25,7 +26,9 @@ public class ContactFormController : ControllerBase
     }
 
     [HttpPost("cf")]
-    [ValidateCaptcha(CaptchaResponseTokenRequestHeaderName = "cf-token")]
+    [ValidateCaptcha(
+        CaptchaResponseTokenRequestHeaderName = "cf-token",
+        ExpectedAction = "dfs")]
     [ProducesResponseType<ContactFormSubmission>(StatusCodes.Status200OK)]
     public async Task<IActionResult> SubmitContactFormAsyncCf(
         [FromBody] ContactFormSubmission contactFormSubmission)
@@ -34,7 +37,10 @@ public class ContactFormController : ControllerBase
     }
 
     [HttpPost("dummy")]
-    [ValidateCaptcha(CaptchaProvider = DummyConstants.CaptchaProviderName)]
+    [ValidateCaptcha(
+        CaptchaProvider = DummyConstants.CaptchaProviderName,
+        CaptchaResponseTokenSource = CaptchaResponseTokenSource.RequestBody
+    )]
     [ProducesResponseType<ContactFormSubmission>(StatusCodes.Status200OK)]
     public async Task<IActionResult> SubmitContactFormAsyncDummy(
         [FromBody] ContactFormSubmission contactFormSubmission)

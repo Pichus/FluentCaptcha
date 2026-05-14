@@ -7,9 +7,9 @@ using FluentCaptcha.NSwag;
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddOpenApiDocument(options =>
+builder.Services.AddOpenApiDocument((options, serviceProvider) =>
 {
-    options.IntegrateWithFluentCaptcha();
+    options.IntegrateWithFluentCaptcha(serviceProvider);
 });
 builder.Services.AddFluentCaptcha(options =>
 {
@@ -20,7 +20,9 @@ builder.Services.AddFluentCaptcha(options =>
 
     options.AddDummy();
 
-    options.DefaultCaptchaResponseTokenSource = CaptchaResponseTokenSource.RequestBody;
+    options.DefaultCaptchaResponseTokenSource = CaptchaResponseTokenSource.RequestHeader;
+
+    options.DefaultCaptchaResponseTokenRequestHeaderName = "token";
 });
 builder.Services.AddControllers();
 
