@@ -1,5 +1,5 @@
-using FluentCaptcha.CloudflareTurnstile.Options;
 using FluentCaptcha.Core;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FluentCaptcha.CloudflareTurnstile;
 
@@ -10,7 +10,9 @@ public static class FluentCaptchaCloudflareTurnstileConfiguratorExtensions
         Action<CloudflareTurnstileOptions>? configureOptions = null)
     {
         configurator.AddCloudflareTurnstile(configureOptions);
-        configurator.DefaultCaptchaProvider = CloudflareTurnstileConstants.CaptchaProviderName;
+
+        configurator.UseCaptchaValidator<CloudflareCaptchaProvider>();
+        configurator.UseCaptchaProvider<CloudflareCaptchaProvider>();
 
         return configurator;
     }
@@ -19,16 +21,15 @@ public static class FluentCaptchaCloudflareTurnstileConfiguratorExtensions
         this FluentCaptchaConfigurator configurator,
         Action<CloudflareTurnstileOptions>? configureOptions = null)
     {
-        configurator.AddCaptchaProvider<CloudflareCaptchaValidator>(
-            CloudflareTurnstileConstants.CaptchaProviderName,
-            true);
-
-        void DefaultOptionsConfig(CloudflareTurnstileOptions options)
+        if (configureOptions is not null)
         {
-            options.SecretKey = CloudflareTurnstileConstants.TestSecretKeys.AlwaysPassValidation;
+            configurator.Services.Configure(configureOptions);
         }
 
-        configurator.AddOptions(configureOptions ?? DefaultOptionsConfig);
+        configurator.Services.AddHttpClient<CloudflareTurnstileHttpClient>();
+
+        configurator.AddCaptchaValidator<CloudflareCaptchaValidator>();
+        configurator.AddCaptchaProvider<CloudflareCaptchaProvider>();
 
         return configurator;
     }
