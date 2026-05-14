@@ -6,5 +6,5 @@ public static class FluentCaptchaConstants
 
     public static readonly string ValidationResultHttpContextItemsKey = LibraryPrefix + "ValidationResult";
 
-    public static readonly string CaptchaResponseTokenRequestHeaderName = "X-Captcha-Response";
+    public static readonly string DefaultCaptchaResponseTokenRequestHeaderName = "X-Captcha-Response";
 }
