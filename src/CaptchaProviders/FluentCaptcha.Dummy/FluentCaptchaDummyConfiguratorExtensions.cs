@@ -8,7 +8,9 @@ public static class FluentCaptchaDummyConfiguratorExtensions
         this FluentCaptchaConfigurator configurator)
     {
         configurator.AddDummy();
-        configurator.DefaultCaptchaProvider = DummyConstants.CaptchaProviderName;
+
+        configurator.UseCaptchaValidator<DummyCaptchaValidator>();
+        configurator.UseCaptchaProvider<DummyCaptchaProvider>();
 
         return configurator;
     }
@@ -16,7 +18,9 @@ public static class FluentCaptchaDummyConfiguratorExtensions
     public static FluentCaptchaConfigurator AddDummy(
         this FluentCaptchaConfigurator configurator)
     {
-        configurator.AddCaptchaProvider<DummyCaptchaValidator>(DummyConstants.CaptchaProviderName);
+        configurator.AddCaptchaValidator<DummyCaptchaValidator>();
+        configurator.AddCaptchaProvider<DummyCaptchaProvider>();
+
         return configurator;
     }
 }
