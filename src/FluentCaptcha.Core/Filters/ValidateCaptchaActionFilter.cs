@@ -1,11 +1,10 @@
 using FluentCaptcha.Core.Abstractions;
-using FluentCaptcha.Core.Attributes;
 using FluentCaptcha.Core.Enums;
 using FluentCaptcha.Core.Exceptions;
+using FluentCaptcha.Core.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Reflection;
 
 namespace FluentCaptcha.Core.Filters;
 
@@ -102,37 +101,15 @@ public class ValidateCaptchaActionFilter : IAsyncActionFilter
 
     private string? FindCaptchaResponseTokenInActionArguments(IDictionary<string, object> actionArguments)
     {
-        string? captchaResponseToken = null;
         foreach (var (argumentName, argumentValue) in actionArguments)
         {
-            var argumentType = argumentValue.GetType();
-            var argumentCaptchaResponseTokenAttribute =
-                argumentType.GetCustomAttribute<CaptchaResponseTokenAttribute>();
-
-            if (argumentCaptchaResponseTokenAttribute is not null && argumentValue is string argumentValueString)
+            var foundToken = argumentValue.TryGetCaptchaResponseTokenPropertyValue(out var captchaResponseToken);
+            if (foundToken)
             {
-                captchaResponseToken = argumentValueString;
-                break;
-            }
-
-            var argumentFields = argumentType.GetProperties();
-
-            foreach (var argumentField in argumentFields)
-            {
-                var argumentFieldCaptchaResponseTokenAttribute =
-                    argumentField.GetCustomAttribute<CaptchaResponseTokenAttribute>();
-
-                if (argumentFieldCaptchaResponseTokenAttribute is null ||
-                    argumentField.GetValue(argumentValue) is not string argumentFieldValue)
-                {
-                    continue;
-                }
-
-                captchaResponseToken = argumentFieldValue;
-                break;
+                return captchaResponseToken;
             }
         }
 
-        return captchaResponseToken;
+        return null;
     }
 }
