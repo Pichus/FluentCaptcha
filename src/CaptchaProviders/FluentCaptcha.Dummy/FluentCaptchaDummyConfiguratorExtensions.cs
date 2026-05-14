@@ -4,8 +4,8 @@ namespace FluentCaptcha.Dummy;
 
 public static class FluentCaptchaDummyConfiguratorExtensions
 {
-    public static IFluentCaptchaConfigurator UseDummy(
-        this IFluentCaptchaConfigurator configurator)
+    public static FluentCaptchaConfigurator UseDummy(
+        this FluentCaptchaConfigurator configurator)
     {
         configurator.AddDummy();
         configurator.DefaultCaptchaProvider = DummyConstants.CaptchaProviderName;
@@ -13,8 +13,8 @@ public static class FluentCaptchaDummyConfiguratorExtensions
         return configurator;
     }
 
-    public static IFluentCaptchaConfigurator AddDummy(
-        this IFluentCaptchaConfigurator configurator)
+    public static FluentCaptchaConfigurator AddDummy(
+        this FluentCaptchaConfigurator configurator)
     {
         configurator.AddCaptchaProvider<DummyCaptchaValidator>(DummyConstants.CaptchaProviderName);
         return configurator;

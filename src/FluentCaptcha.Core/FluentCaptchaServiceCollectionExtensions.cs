@@ -7,7 +7,7 @@ public static class FluentCaptchaServiceCollectionExtensions
 {
     public static IServiceCollection AddFluentCaptcha(
         this IServiceCollection services,
-        Action<IFluentCaptchaConfigurator>? configure = null)
+        Action<FluentCaptchaConfigurator>? configure = null)
     {
         var configurator = new FluentCaptchaConfigurator(services);
 

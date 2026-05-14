@@ -5,8 +5,8 @@ namespace FluentCaptcha.CloudflareTurnstile;
 
 public static class FluentCaptchaCloudflareTurnstileConfiguratorExtensions
 {
-    public static IFluentCaptchaConfigurator UseCloudflareTurnstile(
-        this IFluentCaptchaConfigurator configurator,
+    public static FluentCaptchaConfigurator UseCloudflareTurnstile(
+        this FluentCaptchaConfigurator configurator,
         Action<CloudflareTurnstileOptions>? configureOptions = null)
     {
         configurator.AddCloudflareTurnstile(configureOptions);
@@ -15,8 +15,8 @@ public static class FluentCaptchaCloudflareTurnstileConfiguratorExtensions
         return configurator;
     }
 
-    public static IFluentCaptchaConfigurator AddCloudflareTurnstile(
-        this IFluentCaptchaConfigurator configurator,
+    public static FluentCaptchaConfigurator AddCloudflareTurnstile(
+        this FluentCaptchaConfigurator configurator,
         Action<CloudflareTurnstileOptions>? configureOptions = null)
     {
         configurator.AddCaptchaProvider<CloudflareCaptchaValidator>(

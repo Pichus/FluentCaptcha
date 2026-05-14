@@ -1,17 +1,19 @@
 using FluentCaptcha.Core.Abstractions;
 using FluentCaptcha.Core.Enums;
 using Microsoft.Extensions.DependencyInjection;
+using System.ComponentModel;
 
 namespace FluentCaptcha.Core;
 
-public class FluentCaptchaConfigurator : IFluentCaptchaConfigurator
+public class FluentCaptchaConfigurator
 {
-    private readonly IServiceCollection _services;
-
     public FluentCaptchaConfigurator(IServiceCollection services)
     {
-        _services = services;
+        Services = services;
     }
+
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public IServiceCollection Services { get; }
 
     public string? DefaultCaptchaProvider { get; set; }
 
@@ -27,15 +29,15 @@ public class FluentCaptchaConfigurator : IFluentCaptchaConfigurator
 
         if (asTypedHttpClient)
         {
-            _services.AddHttpClient<ICaptchaValidator, TCaptchaProvider>(serviceKey).AddAsKeyed();
+            Services.AddHttpClient<ICaptchaValidator, TCaptchaProvider>(serviceKey).AddAsKeyed();
         }
 
-        _services.AddKeyedScoped<ICaptchaValidator, TCaptchaProvider>(serviceKey);
+        Services.AddKeyedScoped<ICaptchaValidator, TCaptchaProvider>(serviceKey);
     }
 
     public void AddOptions<TOptions>(Action<TOptions> configureOptions)
         where TOptions : class
     {
-        _services.Configure(configureOptions);
+        Services.Configure(configureOptions);
     }
 }
