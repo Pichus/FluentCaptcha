@@ -1,5 +1,8 @@
-using FluentCaptcha.Core;
 using FluentCaptcha.Core.Attributes;
+using FluentCaptcha.Core.Enums;
+using FluentCaptcha.Core.Extensions;
+using FluentCaptcha.Core.Options;
+using Microsoft.Extensions.Options;
 using NJsonSchema;
 using NSwag;
 using NSwag.Generation.Processors;
@@ -10,6 +13,13 @@ namespace FluentCaptcha.NSwag;
 
 public class ValidateCaptchaFilterOperationProcessor : IOperationProcessor
 {
+    private readonly FluentCaptchaOptions _fluentCaptchaOptions;
+
+    public ValidateCaptchaFilterOperationProcessor(IOptions<FluentCaptchaOptions> fluentCaptchaOptions)
+    {
+        _fluentCaptchaOptions = fluentCaptchaOptions.Value;
+    }
+
     public bool Process(OperationProcessorContext context)
     {
         var validateCaptchaAttribute = context.MethodInfo.GetCustomAttribute<ValidateCaptchaAttribute>();
@@ -19,17 +29,49 @@ public class ValidateCaptchaFilterOperationProcessor : IOperationProcessor
             return true;
         }
 
-        var requestHeaderName = validateCaptchaAttribute.CaptchaResponseTokenRequestHeaderName ??
-                                FluentCaptchaConstants.CaptchaResponseTokenRequestHeaderName;
+        var captchaResponseTokenSource =
+            validateCaptchaAttribute.CaptchaResponseTokenSource == CaptchaResponseTokenSource.Default
+                ? _fluentCaptchaOptions.DefaultCaptchaResponseTokenSource
+                : validateCaptchaAttribute.CaptchaResponseTokenSource;
 
-        context.OperationDescription.Operation.Parameters.Add(new OpenApiParameter
+        var captchaProvider = validateCaptchaAttribute.CaptchaProvider ??
+                              _fluentCaptchaOptions.DefaultCaptchaProvider ?? "Unknown";
+
+        switch (captchaResponseTokenSource)
         {
-            Name = requestHeaderName,
-            Kind = OpenApiParameterKind.Header,
-            Type = JsonObjectType.String,
-            IsRequired = true,
-            Description = "Captcha response token header"
-        });
+            case CaptchaResponseTokenSource.Default or CaptchaResponseTokenSource.RequestHeader:
+                var requestHeaderName = validateCaptchaAttribute.CaptchaResponseTokenRequestHeaderName ??
+                                        _fluentCaptchaOptions.DefaultCaptchaResponseTokenRequestHeaderName;
+
+                context.OperationDescription.Operation.Parameters.Add(new OpenApiParameter
+                {
+                    Name = requestHeaderName,
+                    Kind = OpenApiParameterKind.Header,
+                    Type = JsonObjectType.String,
+                    IsRequired = true,
+                    Description = "Captcha response token header"
+                });
+
+                break;
+            case CaptchaResponseTokenSource.RequestBody:
+                var parameters = context.MethodInfo.GetParameters();
+
+                foreach (var parameter in parameters)
+                {
+                    var captchaResponseTokenPropertyName =
+                        parameter.ParameterType.FindCaptchaResponseTokenPropertyNameOrDefault();
+                    if (captchaResponseTokenPropertyName is not null)
+                    {
+                        context.OperationDescription.Operation.Description +=
+                            $"\n{captchaResponseTokenPropertyName} property is required. You should put your " +
+                            $"{captchaProvider} captcha response token here";
+                    }
+                }
+
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
 
         return true;
     }
