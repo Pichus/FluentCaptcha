@@ -49,7 +49,7 @@ public class ValidateCaptchaFilterOperationProcessor : IOperationProcessor
                     Kind = OpenApiParameterKind.Header,
                     Type = JsonObjectType.String,
                     IsRequired = true,
-                    Description = "Captcha response token header"
+                    Description = $"Captcha response token header. Captcha provider: {captchaProvider}"
                 });
 
                 break;
