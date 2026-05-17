@@ -37,7 +37,7 @@ public enum CaptchaResponseTokenSource
     ///         <c>CaptchaResponseTokenRequestHeaderName</c>
     ///     </see>
     ///     attribute parameter to whatever request header name you want or set a default setting for the whole app by setting
-    ///     <see cref="FluentCaptcha.Core.IFluentCaptchaConfigurator.DefaultCaptchaResponseTokenRequestHeaderName">
+    ///     <see cref="FluentCaptcha.Core.FluentCaptchaConfigurator.DefaultCaptchaResponseTokenRequestHeaderName">
     ///         <c>options.DefaultCaptchaResponseTokenRequestHeaderName</c>
     ///     </see>
     ///     to a desired value during the fluent captcha setup (options inside
