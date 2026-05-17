@@ -10,6 +10,7 @@ namespace FluentCaptcha.Core.Filters;
 
 public class ValidateCaptchaActionFilter : IAsyncActionFilter
 {
+    private readonly string? _captchaResponseTokenFormParameterName;
     private readonly string _captchaResponseTokenHeaderName;
     private readonly CaptchaResponseTokenSource _captchaResponseTokenSource;
     private readonly ICaptchaValidator _captchaValidator;
@@ -19,11 +20,13 @@ public class ValidateCaptchaActionFilter : IAsyncActionFilter
         ICaptchaValidator captchaValidator,
         string captchaResponseTokenHeaderName,
         CaptchaResponseTokenSource captchaResponseTokenSource,
+        string? captchaResponseTokenFormParameterName = null,
         string? expectedAction = null)
     {
         _captchaValidator = captchaValidator;
         _captchaResponseTokenHeaderName = captchaResponseTokenHeaderName;
         _captchaResponseTokenSource = captchaResponseTokenSource;
+        _captchaResponseTokenFormParameterName = captchaResponseTokenFormParameterName;
         _expectedAction = expectedAction;
     }
 
@@ -71,6 +74,34 @@ public class ValidateCaptchaActionFilter : IAsyncActionFilter
                 captchaResponseToken = captchaResponseTokenFromBody;
 
                 break;
+            case CaptchaResponseTokenSource.RequestForm:
+                if (_captchaResponseTokenFormParameterName is null)
+                {
+                    throw new NotSupportedException(
+                        "Selected captcha provider does not support captcha response token extraction from form parameters.");
+                }
+
+                var formContainsCaptchaResponseTokenParameter = context.HttpContext.Request.Form.TryGetValue(
+                    _captchaResponseTokenFormParameterName,
+                    out var captchaResponseTokenFromForm);
+
+                if (!formContainsCaptchaResponseTokenParameter ||
+                    string.IsNullOrWhiteSpace(captchaResponseTokenFromForm))
+                {
+                    var problemDetails = new ProblemDetails
+                    {
+                        Title = "Missing required form parameter",
+                        Status = StatusCodes.Status400BadRequest,
+                        Detail =
+                            $"{_captchaResponseTokenFormParameterName} form parameter is required for this endpoint"
+                    };
+                    context.Result = new BadRequestObjectResult(problemDetails);
+                    return;
+                }
+
+                captchaResponseToken = captchaResponseTokenFromForm.ToString();
+
+                break;
 
             default:
                 throw new ArgumentOutOfRangeException();
@@ -99,11 +130,11 @@ public class ValidateCaptchaActionFilter : IAsyncActionFilter
         await next();
     }
 
-    private string? FindCaptchaResponseTokenInActionArguments(IDictionary<string, object> actionArguments)
+    private static string? FindCaptchaResponseTokenInActionArguments(IDictionary<string, object> actionArguments)
     {
-        foreach (var (argumentName, argumentValue) in actionArguments)
+        foreach (var actionArgument in actionArguments)
         {
-            var foundToken = argumentValue.TryGetCaptchaResponseTokenPropertyValue(out var captchaResponseToken);
+            var foundToken = actionArgument.Value.TryGetCaptchaResponseTokenPropertyValue(out var captchaResponseToken);
             if (foundToken)
             {
                 return captchaResponseToken;

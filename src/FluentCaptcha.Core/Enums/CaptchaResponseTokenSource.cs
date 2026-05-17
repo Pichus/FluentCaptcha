@@ -46,5 +46,26 @@ public enum CaptchaResponseTokenSource
     ///     </see>
     ///     )
     /// </remarks>
-    RequestHeader
+    RequestHeader,
+
+    /// <summary>
+    ///     Specifies that the captcha response token is stored in the request form.
+    /// </summary>
+    /// <remarks>
+    ///     By default, the library looks for X-Captcha-Response request header in the requests marked for captcha validation.
+    ///     However, you may change it whether for a specific action by setting
+    ///     <see cref="FluentCaptcha.Core.Attributes.ValidateCaptchaAttribute.CaptchaResponseTokenRequestHeaderName">
+    ///         <c>CaptchaResponseTokenRequestHeaderName</c>
+    ///     </see>
+    ///     attribute parameter to whatever request header name you want or set a default setting for the whole app by setting
+    ///     <see cref="FluentCaptcha.Core.FluentCaptchaConfigurator.DefaultCaptchaResponseTokenRequestHeaderName">
+    ///         <c>options.DefaultCaptchaResponseTokenRequestHeaderName</c>
+    ///     </see>
+    ///     to a desired value during the fluent captcha setup (options inside
+    ///     <see cref="FluentCaptchaServiceCollectionExtensions.AddFluentCaptcha">
+    ///         <c>AddFluentCaptcha</c>
+    ///     </see>
+    ///     )
+    /// </remarks>
+    RequestForm
 }

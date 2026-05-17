@@ -34,7 +34,7 @@ public class ValidateCaptchaAttribute : Attribute, IFilterFactory
     /// </summary>
     /// <remarks>
     ///     It is strongly advised to pass predefined constants to this parameter.
-    ///     </br>
+    ///     <br />
     ///     E.g. <c>YourDesiredCaptchaProviderNameConstants.CaptchaProviderName</c>
     /// </remarks>
     public string? CaptchaProvider { get; set; }
@@ -49,11 +49,30 @@ public class ValidateCaptchaAttribute : Attribute, IFilterFactory
     ///     </see>
     ///     is set to
     ///     <see cref="CaptchaResponseTokenSource.RequestHeader">
-    ///         <c>CaptchaResponseTokenSource.RequestHeader</c>
+    ///         <c>RequestHeader</c>
     ///     </see>
     ///     .
     /// </remarks>
     public string? CaptchaResponseTokenRequestHeaderName { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the captcha response token form parameter name;
+    /// </summary>
+    /// <remarks>
+    ///     Only takes effect when
+    ///     <see cref="ValidateCaptchaAttribute.CaptchaResponseTokenSource">
+    ///         <c>CaptchaResponseTokenSource</c>
+    ///     </see>
+    ///     is set to
+    ///     <see cref="CaptchaResponseTokenSource.RequestForm">
+    ///         <c>RequestForm</c>
+    ///     </see>
+    ///     .
+    ///     <br /> <br />
+    ///     By default, the form parameter name provided by your selected
+    ///     captcha provider (<see cref="ICaptchaProvider.CaptchaResponseTokenFormParameterName" />) is used.
+    /// </remarks>
+    public string? CaptchaResponseTokenFormParameterName { get; set; }
 
     public bool IsReusable => false;
 
@@ -66,6 +85,10 @@ public class ValidateCaptchaAttribute : Attribute, IFilterFactory
             throw new FluentCaptchaConfigurationException("No config provided for fluent captcha.");
         }
 
+        CaptchaResponseTokenSource = CaptchaResponseTokenSource == CaptchaResponseTokenSource.Default
+            ? fluentCaptchaOptions.DefaultCaptchaResponseTokenSource
+            : CaptchaResponseTokenSource;
+        
         CaptchaResponseTokenRequestHeaderName ??= fluentCaptchaOptions.DefaultCaptchaResponseTokenRequestHeaderName;
 
         var captchaProviderName = fluentCaptchaOptions.DefaultCaptchaProvider;
@@ -84,14 +107,13 @@ public class ValidateCaptchaAttribute : Attribute, IFilterFactory
                 $"No captcha providers registered with name '{captchaProviderName}'");
         }
 
-        var captchaResponseTokenSource = CaptchaResponseTokenSource == CaptchaResponseTokenSource.Default
-            ? fluentCaptchaOptions.DefaultCaptchaResponseTokenSource
-            : CaptchaResponseTokenSource;
+        CaptchaResponseTokenFormParameterName ??= captchaProviderInstance.CaptchaResponseTokenFormParameterName;
 
         return new ValidateCaptchaActionFilter(
             captchaProviderInstance,
             CaptchaResponseTokenRequestHeaderName,
-            captchaResponseTokenSource,
+            CaptchaResponseTokenSource,
+            CaptchaResponseTokenFormParameterName,
             ExpectedAction);
     }
 }

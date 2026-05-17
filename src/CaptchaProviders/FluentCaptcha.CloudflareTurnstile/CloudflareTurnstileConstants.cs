@@ -4,6 +4,8 @@ public static class CloudflareTurnstileConstants
 {
     public const string CaptchaProviderName = "CloudflareTurnstile";
 
+    public static readonly string CaptchaResponseTokenFormParameterName = "cf-turnstile-response";
+
     public static readonly string ApiUrl = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
     public static class TestSecretKeys

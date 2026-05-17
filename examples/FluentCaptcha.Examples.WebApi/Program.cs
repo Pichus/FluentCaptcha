@@ -15,7 +15,7 @@ builder.Services.AddFluentCaptcha(options =>
 {
     options.UseCloudflareTurnstile(cloudflareOptions =>
     {
-        cloudflareOptions.SecretKey = CloudflareTurnstileConstants.TestSecretKeys.AlwaysPassValidation;
+        // cloudflareOptions.SecretKey = CloudflareTurnstileConstants.TestSecretKeys.AlwaysPassValidation;
     });
 
     options.AddDummy();

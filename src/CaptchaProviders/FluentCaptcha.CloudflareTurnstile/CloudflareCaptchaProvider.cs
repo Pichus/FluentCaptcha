@@ -13,6 +13,9 @@ public class CloudflareCaptchaProvider : ICaptchaProvider
 
     public static string Name => CloudflareTurnstileConstants.CaptchaProviderName;
 
+    public string CaptchaResponseTokenFormParameterName =>
+        CloudflareTurnstileConstants.CaptchaResponseTokenFormParameterName;
+
     public async Task<CaptchaValidationResult> ValidateAsync(
         string captchaResponseToken,
         string? remoteIp = null,

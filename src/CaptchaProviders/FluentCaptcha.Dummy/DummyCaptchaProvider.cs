@@ -13,6 +13,8 @@ public class DummyCaptchaProvider : ICaptchaProvider
 
     public static string Name => DummyConstants.CaptchaProviderName;
 
+    public string? CaptchaResponseTokenFormParameterName => null;
+
     public async Task<CaptchaValidationResult> ValidateAsync(
         string captchaResponseToken,
         string? remoteIp = null,
