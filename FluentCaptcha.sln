@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCaptcha.Examples.Swas
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCaptcha.Examples.Shared", "examples\FluentCaptcha.Examples.Shared\FluentCaptcha.Examples.Shared.csproj", "{54DFF7B2-E0DF-47F3-B7D5-F5BB0EB0409E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentCaptcha.AspNetCore.OpenApi", "src\Integrations\FluentCaptcha.AspNetCore.OpenApi\FluentCaptcha.AspNetCore.OpenApi.csproj", "{B326772D-945F-460F-8A36-4CB69971273A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,5 +56,9 @@ Global
 		{54DFF7B2-E0DF-47F3-B7D5-F5BB0EB0409E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54DFF7B2-E0DF-47F3-B7D5-F5BB0EB0409E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54DFF7B2-E0DF-47F3-B7D5-F5BB0EB0409E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B326772D-945F-460F-8A36-4CB69971273A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B326772D-945F-460F-8A36-4CB69971273A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B326772D-945F-460F-8A36-4CB69971273A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B326772D-945F-460F-8A36-4CB69971273A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

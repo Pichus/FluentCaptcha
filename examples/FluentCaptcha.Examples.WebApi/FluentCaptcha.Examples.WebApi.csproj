@@ -16,6 +16,7 @@
         <ProjectReference Include="..\..\src\FluentCaptcha.Core\FluentCaptcha.Core.csproj"/>
         <ProjectReference Include="..\..\src\CaptchaProviders\FluentCaptcha.CloudflareTurnstile\FluentCaptcha.CloudflareTurnstile.csproj"/>
         <ProjectReference Include="..\..\src\Integrations\FluentCaptcha.NSwag\FluentCaptcha.NSwag.csproj"/>
+        <ProjectReference Include="..\..\src\Integrations\FluentCaptcha.AspNetCore.OpenApi\FluentCaptcha.AspNetCore.OpenApi.csproj"/>
         <ProjectReference Include="..\FluentCaptcha.Examples.Shared\FluentCaptcha.Examples.Shared.csproj"/>
     </ItemGroup>
 
